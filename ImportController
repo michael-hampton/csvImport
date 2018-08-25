@@ -1,0 +1,36 @@
+<?php
+
+use Phalcon\Mvc\View;
+
+/**
+ * 
+ */
+class ImportController extends ControllerBase
+{
+
+   
+
+    public function uploadFileAction ()
+    {
+        if ( !isset ($_FILES["Import"]) )
+        {
+            $this->ajaxresponse ('error', 'No file was uploaded');
+        }
+
+        $filename = $_FILES["Import"]["tmp_name"];
+
+        if ( $_FILES["Import"]["size"] <= 0 )
+        {
+            $this->ajaxresponse ('error', 'The file you uploaded appears to be empty');
+        }
+        
+        $objImporter = new Importer();
+
+        $arrCsv = $objImporter->import ($filename);
+
+        if ( !$arrCsv )
+        {
+            $this->ajaxresponse ('error', 'Unable to import file', $objImporter->getArrErrors ());
+        }
+    }
+}
