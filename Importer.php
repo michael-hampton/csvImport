@@ -15,13 +15,23 @@ class Importer
 {
 
     use Validation;
-    
+
     /**
      *
      * @var type 
      */
     private $arrErrors = [];
 
+    /**
+     *
+     * @var type 
+     */
+    private $arrSuccessMessages = [];
+
+    /**
+     *
+     * @var type 
+     */
     private $requiredHeaders = array(
         'CustomerRef',
         'Title',
@@ -39,6 +49,11 @@ class Importer
         'Quantity',
         'channel'
     ); //headers we expect
+
+    /**
+     *
+     * @var type 
+     */
     private $fields = array(
         'CustomerRef' => ['type' => 'String', 'required' => true],
         'Title' => ['type' => 'String', 'required' => true],
@@ -82,10 +97,10 @@ class Importer
 
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * 
      * @param type $arrData
@@ -94,7 +109,7 @@ class Importer
     private function validate ($arrData)
     {
         foreach ($arrData as $lineNo => $arrColumn) {
-            
+
             $lineNo++;
 
             foreach ($arrColumn as $fieldName => $fieldValue) {
@@ -134,8 +149,10 @@ class Importer
                     }
                 }
             }
+            
+             $this->arrSuccessMessages[] = "Line {$lineNo} was imported successfully";
         }
-        
+
         return true;
     }
 
@@ -150,13 +167,13 @@ class Importer
 
         if ( empty ($foundHeaders) )
         {
-            $this->arrErrors[] = "Headers do not match";
+            $this->arrErrors[] = "No header line could be found";
             return false;
         }
 
         if ( $foundHeaders !== $this->requiredHeaders )
         {
-
+            $this->arrErrors[] = "Incorrect headers found in file";
             return false;
         }
 
@@ -241,7 +258,7 @@ class Importer
 
         return $out;
     }
-    
+
     /**
      * 
      * @return type
@@ -249,6 +266,20 @@ class Importer
     public function getArrErrors ()
     {
         return $this->arrErrors;
+    }
+
+    public function getArrSuccessMessages ()
+    {
+        return $this->arrSuccessMessages;
+    }
+
+    /**
+     * 
+     * @param type $arrSuccessMessages
+     */
+    public function setArrSuccessMessages ($arrSuccessMessages)
+    {
+        $this->arrSuccessMessages = $arrSuccessMessages;
     }
 
 }
