@@ -12,6 +12,8 @@ class ImportController extends ControllerBase
 
     public function uploadFileAction ()
     {
+        $this->view->disable();
+        
         if ( !isset ($_FILES["Import"]) )
         {
             $this->ajaxresponse ('error', 'No file was uploaded');
@@ -30,7 +32,9 @@ class ImportController extends ControllerBase
 
         if ( !$arrCsv )
         {
-            $this->ajaxresponse ('error', 'Unable to import file', $objImporter->getArrErrors ());
+            $this->ajaxresponse ('error', 'Unable to import file', ['errors' => $objImporter->getArrErrors ()]);
         }
+        
+        $this->ajaxresponse('success', 'success', ['results' => $objImporter->getArrSuccessMessages ()]);
     }
 }
